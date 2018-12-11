@@ -4,4 +4,6 @@ import java.util.*
 
 data class LoyaltyPoint(val id: UUID = UUID.randomUUID(), val accountId: Int, val usdValue: Double, val freeNightId: UUID? = null)
 
-data class FreeNight(val id: UUID = UUID.randomUUID(), val usdValue: Double)
+data class FreeNight(val id: UUID = UUID.randomUUID(), val usdValue: Double, val accountId: Int, val redeemed : Boolean = false)
+
+data class Redemption(val id: UUID = UUID.randomUUID(), val freeNightId: UUID)
