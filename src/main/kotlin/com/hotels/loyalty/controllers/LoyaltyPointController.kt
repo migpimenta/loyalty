@@ -9,8 +9,11 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class LoyaltyPointController(val loyaltyService: LoyaltyService) {
 
-    @PostMapping("/point")
-    fun addPoint(@RequestBody points: List<LoyaltyPoint>) {
+    /**
+     * Creates loyalty points.
+     */
+    @PostMapping("/points")
+    fun addPoints(@RequestBody points: List<LoyaltyPoint>) {
         loyaltyService.addPoints(points)
     }
 }

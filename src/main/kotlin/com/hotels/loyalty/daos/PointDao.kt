@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component
 @Component
 class PointDao {
 
+    /** Map of point id to point **/
     val allPoints = mutableListOf(
             LoyaltyPoint(accountId = 50, usdValue = 100.0),
             LoyaltyPoint(accountId = 50, usdValue = 100.0),
