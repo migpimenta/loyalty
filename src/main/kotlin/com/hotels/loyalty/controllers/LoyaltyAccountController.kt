@@ -20,7 +20,7 @@ class LoyaltyAccountController(val loyaltyService: LoyaltyService) {
     /**
      * Retrieves all free nights for the accounts.
      */
-    @GetMapping("/account/{accountId}/freenight")
+    @GetMapping("/account/{accountId}/freenights")
     fun getFreeNights(@PathVariable accountId: Int) : List<FreeNight> {
         return loyaltyService.getFreeNights(accountId)
     }
