@@ -20,7 +20,7 @@ class PointDao {
         return allPoints.values.filter { accountIds.contains(it.accountId) }
     }
 
-    fun upsertPoints(points: List<Point>) {
+    fun savePoints(points: List<Point>) {
         points.forEach { allPoints[it.id] =  it }
     }
 }

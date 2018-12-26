@@ -32,7 +32,7 @@ class LoyaltyService(val pointDao: PointDao, val rewardDao: RewardDao) {
                         .onEach { dissociatedPoints ->
                             // persist points which are not associated with a reward
                             if (dissociatedPoints.size < pointsPerReward) {
-                                pointDao.upsertPoints(dissociatedPoints)
+                                pointDao.savePoints(dissociatedPoints)
                             }
                         }
                         .filter { it.size == pointsPerReward }
@@ -40,7 +40,7 @@ class LoyaltyService(val pointDao: PointDao, val rewardDao: RewardDao) {
                         .onEach { (reward, points) ->
                             // persist newly created reward and points associated with it
                             rewardDao.saveReward(reward)
-                            pointDao.upsertPoints(points.map { it.copy(rewardId = reward.id) } )
+                            pointDao.savePoints(points.map { it.copy(rewardId = reward.id) } )
                             logRewardCreation(reward, points)
                         }
                 }
