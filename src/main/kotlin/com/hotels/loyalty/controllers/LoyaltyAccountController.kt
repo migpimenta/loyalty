@@ -1,7 +1,7 @@
 package com.hotels.loyalty.controllers
 
-import com.hotels.loyalty.FreeNight
-import com.hotels.loyalty.LoyaltyPoint
+import com.hotels.loyalty.Reward
+import com.hotels.loyalty.Point
 import com.hotels.loyalty.Redemption
 import com.hotels.loyalty.services.LoyaltyService
 import org.springframework.web.bind.annotation.*
@@ -13,24 +13,24 @@ class LoyaltyAccountController(val loyaltyService: LoyaltyService) {
      * Retrieves all loyalty points for the account.
      */
     @GetMapping("/account/{accountId}/points")
-    fun getPoints(@PathVariable accountId: Int): List<LoyaltyPoint> {
+    fun getPoints(@PathVariable accountId: Int): List<Point> {
         return loyaltyService.getPointsFor(accountId)
     }
 
     /**
-     * Retrieves all free nights for the accounts.
+     * Retrieves all rewards for the accounts.
      */
-    @GetMapping("/account/{accountId}/freenights")
-    fun getFreeNights(@PathVariable accountId: Int) : List<FreeNight> {
-        return loyaltyService.getFreeNights(accountId)
+    @GetMapping("/account/{accountId}/rewards")
+    fun getRewards(@PathVariable accountId: Int) : List<Reward> {
+        return loyaltyService.getRewards(accountId)
     }
 
     /**
-     * Redeems a free night.
+     * Redeems a reward.
      */
     @PostMapping("/account/{accountId}/redemption")
-    fun redeemFreeNights(@PathVariable accountId: Int, @RequestBody redemption: Redemption) {
-        loyaltyService.redeemFreeNights(accountId, redemption.freeNightId)
+    fun redeemRewards(@PathVariable accountId: Int, @RequestBody redemption: Redemption) {
+        loyaltyService.redeemReward(accountId, redemption.rewardId)
     }
 }
 

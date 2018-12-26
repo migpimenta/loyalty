@@ -1,61 +1,61 @@
 package com.hotels.loyalty.services
 
-import com.hotels.loyalty.FreeNight
-import com.hotels.loyalty.LoyaltyPoint
-import com.hotels.loyalty.daos.FreeNightDao
+import com.hotels.loyalty.Reward
+import com.hotels.loyalty.Point
+import com.hotels.loyalty.daos.RewardDao
 import com.hotels.loyalty.daos.PointDao
 import org.springframework.stereotype.Service
 import java.util.*
 
 @Service
-class LoyaltyService(val pointDao: PointDao, val freeNightDao: FreeNightDao) {
-    val pointsPerFreeNight = 4
+class LoyaltyService(val pointDao: PointDao, val rewardDao: RewardDao) {
+    val pointsPerReward = 4
 
     /**
-     * Creates loyalty points. In the process creates free nights by:
-     * - Gathering all points not associated with a free night for accounts we are adding points.
-     * - Chunk them in {@link #pointsPerFreeNight}.
-     * - Create free night and saving it.
-     * - update points with the new freeNightId.
+     * Creates loyalty points. In the process creates rewards by:
+     * - Gathering all points not associated with a reward for accounts we are adding points.
+     * - Chunk them in {@link #pointsPerReward}.
+     * - Create reward and saving it.
+     * - update points with the new rewardId.
      */
-    fun addPoints(points: List<LoyaltyPoint>) {
+    fun addPoints(points: List<Point>) {
 
         pointDao.getPointsFor(*getAccountIds(points))
-                .filter { it.freeNightId == null }
+                .filter { it.rewardId == null }
                 .union(points)
                 .groupBy { it.accountId }
                 .map { (accountId, points) ->
                     points
-                        .chunked(pointsPerFreeNight)
+                        .chunked(pointsPerReward)
                         .onEach {
-                            // side-effect: persist points not associated with a free night
-                            if (it.size < pointsPerFreeNight) {
+                            // side-effect: persist points not associated with a reward
+                            if (it.size < pointsPerReward) {
                                 pointDao.upsertPoints(points)
                             }
                         }
-                        .filter { it.size == pointsPerFreeNight }
-                        .map { (freeNightDao.createFreeNight(points, accountId) to points) }
-                        .onEach { (freeNight, points) ->
-                            //side-effect: persist points associated with the newly created freeNight
-                            pointDao.upsertPoints(points.map { it.copy(freeNightId = freeNight.id) })
+                        .filter { it.size == pointsPerReward }
+                        .map { (rewardDao.createReward(points, accountId) to points) }
+                        .onEach { (reward, points) ->
+                            //side-effect: persist points associated with the newly created reward
+                            pointDao.upsertPoints(points.map { it.copy(rewardId = reward.id) })
                         }
                 }
     }
 
-    fun getPointsFor(accountId: Int): List<LoyaltyPoint> {
+    fun getPointsFor(accountId: Int): List<Point> {
         return pointDao.getPointsFor(accountId)
     }
 
-    fun getFreeNights(accountId: Int): List<FreeNight> {
-        return freeNightDao.getFreeNights(accountId)
+    fun getRewards(accountId: Int): List<Reward> {
+        return rewardDao.getRewards(accountId)
     }
 
-    private fun getAccountIds(points: List<LoyaltyPoint>): IntArray {
+    private fun getAccountIds(points: List<Point>): IntArray {
         return points.map { it.accountId }.toIntArray()
     }
 
-    fun redeemFreeNights(accountId: Int, freeNightId: UUID) {
-        freeNightDao.markAsRedeemed(freeNightId)
+    fun redeemReward(accountId: Int, rewardId: UUID) {
+        rewardDao.markAsRedeemed(rewardId)
     }
 }
 
