@@ -55,17 +55,19 @@ class LoyaltyService(val pointDao: PointDao, val rewardDao: RewardDao) {
     }
 
     fun redeemReward(accountId: Int, rewardId: UUID) {
-        rewardDao.getReward(rewardId)?.let {
+        rewardDao.getReward(rewardId)?.let { reward ->
+            if (reward.redeemed) illegalArgumentException("RewardId=$rewardId has already been redeemed")
             when (accountId) {
-                it.accountId -> rewardDao.saveReward(it.redeemReward())
-                else -> illegalArgumentException("Trying to redeem rewardId=$rewardId on accountId=$accountId but the reward belongs to accountId=${it.accountId}")
+                reward.accountId -> rewardDao.saveReward(reward.redeemReward())
+                else -> illegalArgumentException("Trying to redeem rewardId=$rewardId on accountId=$accountId but " +
+                        "the reward belongs to accountId=${reward.accountId}")
             }
         } ?: illegalArgumentException("No reward found for rewardId=$rewardId")
     }
 
-    private fun illegalArgumentException(message: String) {
-        logger.error(message)
-        throw IllegalArgumentException(message)
+    private fun illegalArgumentException(errorMessage: String) {
+        logger.error(errorMessage)
+        throw IllegalArgumentException(errorMessage)
     }
 
     private fun getAccountIds(points: List<Point>) = points.map { it.accountId }
