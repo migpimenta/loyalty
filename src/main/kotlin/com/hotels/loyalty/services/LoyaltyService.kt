@@ -21,7 +21,6 @@ class LoyaltyService(val pointDao: PointDao, val rewardDao: RewardDao) {
      * - update points with the new rewardId.
      */
     fun addPoints(pointsToAdd: List<Point>) {
-
         pointDao.getPointsFor(getAccountIds(pointsToAdd))
                 .filter { it.rewardId == null }
                 .union(pointsToAdd)
