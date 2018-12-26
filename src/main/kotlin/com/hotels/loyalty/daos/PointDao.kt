@@ -16,7 +16,7 @@ class PointDao {
             Point(accountId = 2, usdValue = 1000.0)
     ).associateBy { it.id }.toMutableMap()
 
-    fun getPointsFor(vararg accountIds: Int): List<Point> {
+    fun getPointsFor( accountIds: List<Int>): List<Point> {
         return allPoints.values.filter { accountIds.contains(it.accountId) }
     }
 

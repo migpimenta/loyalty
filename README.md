@@ -16,11 +16,60 @@ The value of the reward is the average of the loyalty points that compose it.
   * Retrieve all their loyalty rewards.
   * Redeem their rewards, i.e., use their free product.
 
-### Kotlin features demonstrated
+### Kotlin features covered
 
 * Nullable types
 * Extension functions
-* Collections rich APIs
+* Rich Collection APIs
 * Immutability support
 * Data classes
-* String templates (TODO!)
+* String templates
+* *When* statement
+* *Let* and *Elvis operator*
+
+
+### How to build and run the application
+
+```
+mvn clean install && mvn spring-boot:run
+```
+
+### Sample requests
+
+Adds two points to accountId=500 and one point to accountId=30:
+
+```
+curl -v -X POST \
+  http://localhost:8080/points \
+  -H 'content-type: application/json' \
+  -d '[
+    {
+        "accountId": 500,
+        "usdValue": 100
+    },
+    {
+        "accountId": 500,
+        "usdValue": 100
+    },
+    {
+        "accountId": 30,
+        "usdValue": 200
+    }
+]'
+```
+
+Get all points for accountId=500:
+
+```
+curl http://localhost:8080/account/500/points | json_pp
+```
+
+Get all rewards for accountId=500:
+```
+curl http://localhost:8080/account/500/rewards | json_pp
+```
+
+Redeem a reward
+```
+
+```

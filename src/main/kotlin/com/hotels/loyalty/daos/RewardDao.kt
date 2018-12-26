@@ -9,26 +9,15 @@ import java.util.*
 class RewardDao {
     val rewards = mutableMapOf<UUID, Reward>()
 
-    fun createReward(points: List<Point>, accountId: Int): Reward {
-        val reward = Reward(usdValue = averageUsdValue(points), accountId = accountId)
-
+    fun saveReward(reward: Reward) {
         rewards[reward.id] = reward
-
-        return reward
     }
 
-    fun getRewards(accountId: Int): List<Reward> {
+    fun getRewardsByAccount(accountId: Int): List<Reward> {
         return rewards.values.filter { it.accountId == accountId }
     }
 
-    fun markAsRedeemed(reward: UUID) = {
-        rewards[reward]?.let { rewards[it.id] = it.markAsRedeemed() }
+    fun getReward(rewardId: UUID): Reward? {
+        return rewards[rewardId]
     }
-
-    private fun averageUsdValue(it: List<Point>) = it.map { it.usdValue }.average()
-
-    /**
-     * Extension function.
-     */
-    fun Reward.markAsRedeemed(): Reward = copy(redeemed = true)
 }
