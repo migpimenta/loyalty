@@ -17,4 +17,3 @@ class LoyaltyPointController(val loyaltyService: LoyaltyService) {
         loyaltyService.addPoints(points)
     }
 }
-

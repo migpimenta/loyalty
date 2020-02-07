@@ -33,7 +33,7 @@ class LoyaltyAccountController(val loyaltyService: LoyaltyService) {
      * Redeems a reward. Would be preferable to use spring's @ExceptionHandler but using try catch to
      * demonstrate try as an expression.
      */
-    @PostMapping("/account/{accountId}/redemption")
+    @PostMapping("/account/{accountId}/ ")
     fun redeemRewards(@PathVariable accountId: Int, @RequestBody redemption: Redemption) : ResponseEntity<Any> {
         return try {
             loyaltyService.redeemReward(accountId, redemption.rewardId)

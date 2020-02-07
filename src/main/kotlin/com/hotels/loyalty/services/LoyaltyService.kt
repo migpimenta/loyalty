@@ -22,27 +22,27 @@ class LoyaltyService(val pointDao: PointDao, val rewardDao: RewardDao) {
      */
     fun addPoints(pointsToAdd: List<Point>) {
         pointDao.getPointsFor(getAccountIds(pointsToAdd))
-                .filter { it.rewardId == null }
-                .union(pointsToAdd)
-                .groupBy { it.accountId }
-                .map { (accountId, points) ->
-                    points
-                        .chunked(pointsPerReward)
-                        .onEach { dissociatedPoints ->
-                            // persist points which are not associated with a reward
-                            if (dissociatedPoints.size < pointsPerReward) {
-                                pointDao.savePoints(dissociatedPoints)
-                            }
+            .filter { it.rewardId == null }
+            .union(pointsToAdd)
+            .groupBy { it.accountId }
+            .map { (accountId, points) ->
+                points
+                    .chunked(pointsPerReward)
+                    .onEach { dissociatedPoints ->
+                        // persist points which are not associated with a reward
+                        if (dissociatedPoints.size < pointsPerReward) {
+                            pointDao.savePoints(dissociatedPoints)
                         }
-                        .filter { it.size == pointsPerReward }
-                        .map { (createReward(it, accountId) to it) }
-                        .onEach { (reward, points) ->
-                            // persist newly created reward and points associated with it
-                            rewardDao.saveReward(reward)
-                            pointDao.savePoints(points.map { it.copy(rewardId = reward.id) } )
-                            logRewardCreation(reward, points)
-                        }
-                }
+                    }
+                    .filter { it.size == pointsPerReward }
+                    .map { (createReward(it, accountId) to it) }
+                    .onEach { (reward, points) ->
+                        // persist newly created reward and points associated with it
+                        rewardDao.saveReward(reward)
+                        pointDao.savePoints(points.map { it.copy(rewardId = reward.id) } )
+                        logRewardCreation(reward, points)
+                    }
+            }
     }
 
     fun getPointsFor(accountId: Int): List<Point> {
